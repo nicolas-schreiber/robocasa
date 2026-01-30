@@ -24,6 +24,8 @@ def create_env(
     ],
     camera_widths=128,
     camera_heights=128,
+    camera_depths=False,
+    camera_segmentations=None,
     seed=None,
     render_onscreen=False,
     # robocasa-related configs
@@ -33,11 +35,15 @@ def create_env(
     layout_and_style_ids=None,
     layout_ids=None,
     style_ids=None,
+    absolute_actions=False,
 ):
     controller_config = load_composite_controller_config(
         controller=None,
         robot=robots if isinstance(robots, str) else robots[0],
     )
+
+    if absolute_actions:
+        controller_config["body_parts"]["right"]["input_type"] = "absolute"
 
     env_kwargs = dict(
         env_name=env_name,
@@ -51,7 +57,8 @@ def create_env(
         ignore_done=True,
         use_object_obs=True,
         use_camera_obs=(not render_onscreen),
-        camera_depths=False,
+        camera_depths=camera_depths,
+        camera_segmentations=camera_segmentations,
         seed=seed,
         obj_instance_split=obj_instance_split,
         generative_textures=generative_textures,
